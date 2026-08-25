@@ -37,6 +37,9 @@ ICON_SUNNY = "sunny"
 ICON_CLOUDY = "cloudy"
 ICON_RAIN = "rain"
 ICON_SUN_CLOUD = "sun_cloud"
+ICON_SNOW = "snow"
+ICON_THUNDER = "thunder"
+ICON_SLEET = "sleet"    # 霙(雨と雪が混じった状態)
 
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 
@@ -52,25 +55,27 @@ _WMO_ICON_MAP = {
     51: ICON_RAIN,       # 弱い霧雨
     53: ICON_RAIN,       # 霧雨
     55: ICON_RAIN,       # 強い霧雨
-    56: ICON_RAIN,       # 弱い着氷性の霧雨
-    57: ICON_RAIN,       # 着氷性の霧雨
+    # 着氷性(freezing)の霧雨・雨。WMOのコード表には「霙」そのものが無いため、
+    # 雨と雪の中間にあたるこの4つを霙アイコンに割り当てている。
+    56: ICON_SLEET,      # 弱い着氷性の霧雨
+    57: ICON_SLEET,      # 着氷性の霧雨
     61: ICON_RAIN,       # 弱い雨
     63: ICON_RAIN,       # 雨
     65: ICON_RAIN,       # 強い雨
-    66: ICON_RAIN,       # 弱い着氷性の雨
-    67: ICON_RAIN,       # 着氷性の雨
-    71: ICON_CLOUDY,     # 弱い雪
-    73: ICON_CLOUDY,     # 雪
-    75: ICON_CLOUDY,     # 強い雪
-    77: ICON_CLOUDY,     # 雪粒
+    66: ICON_SLEET,      # 弱い着氷性の雨
+    67: ICON_SLEET,      # 着氷性の雨
+    71: ICON_SNOW,       # 弱い雪
+    73: ICON_SNOW,       # 雪
+    75: ICON_SNOW,       # 強い雪
+    77: ICON_SNOW,       # 雪粒
     80: ICON_RAIN,       # 弱いにわか雨
     81: ICON_RAIN,       # にわか雨
     82: ICON_RAIN,       # 激しいにわか雨
-    85: ICON_CLOUDY,     # 弱いにわか雪
-    86: ICON_CLOUDY,     # 激しいにわか雪
-    95: ICON_RAIN,       # 雷雨
-    96: ICON_RAIN,       # 雷雨(弱い雹を伴う)
-    99: ICON_RAIN,       # 雷雨(強い雹を伴う)
+    85: ICON_SNOW,       # 弱いにわか雪
+    86: ICON_SNOW,       # 激しいにわか雪
+    95: ICON_THUNDER,    # 雷雨
+    96: ICON_THUNDER,    # 雷雨(弱い雹を伴う)
+    99: ICON_THUNDER,    # 雷雨(強い雹を伴う)
 }
 
 

@@ -8,7 +8,10 @@ import os
 import pygame
 
 import config
-from weather_openmeteo import ICON_SUNNY, ICON_CLOUDY, ICON_RAIN, ICON_SUN_CLOUD
+from weather_openmeteo import (
+    ICON_SUNNY, ICON_CLOUDY, ICON_RAIN, ICON_SUN_CLOUD,
+    ICON_SNOW, ICON_THUNDER, ICON_SLEET,
+)
 
 WEEKDAY_JP = ["月", "火", "水", "木", "金", "土", "日"]
 
@@ -201,11 +204,15 @@ def draw_clock_panel(screen, fonts, now):
 # 天気アイコン (画像を使わずベクター描画)
 # ----------------------------------------------------------------
 def _draw_cloud(surface, cx, cy, scale, color):
-    r = int(14 * scale)
-    pygame.draw.circle(surface, color, (cx - r, cy + r // 3), r)
-    pygame.draw.circle(surface, color, (cx + int(r * 0.2), cy - int(r * 0.4)), int(r * 1.15))
-    pygame.draw.circle(surface, color, (cx + int(r * 1.4), cy + r // 4), int(r * 0.9))
-    body = pygame.Rect(cx - r, cy, int(r * 2.4), int(r * 1.0))
+    """雲。(cx, cy)を中心として左右対称に描く。
+    以前は右側に寄った非対称な形で、scale=1.6のとき幅が90px以上になり
+    78pxのアイコンボックスからはみ出していたため、大きさも見直してある。
+    """
+    r = int(11 * scale)
+    pygame.draw.circle(surface, color, (cx - int(r * 1.15), cy + r // 3), r)
+    pygame.draw.circle(surface, color, (cx, cy - int(r * 0.45)), int(r * 1.25))
+    pygame.draw.circle(surface, color, (cx + int(r * 1.15), cy + r // 3), int(r * 0.95))
+    body = pygame.Rect(cx - int(r * 1.6), cy, int(r * 3.2), int(r * 1.05))
     pygame.draw.rect(surface, color, body, border_radius=int(r * 0.5))
 
 
@@ -221,11 +228,63 @@ def _draw_sun(surface, cx, cy, scale, color):
         pygame.draw.line(surface, color, (x1, y1), (x2, y2), max(2, int(scale)))
 
 
+# 雲の下に落ちる粒(雨・雪)を並べるときの、粒どうしの間隔
+def _precip_spacing(scale):
+    return int(11 * scale)
+
+
+def _draw_raindrop(surface, x, y, scale, color):
+    """雨粒1つ。右上から左下へ流れる線として描く。"""
+    pygame.draw.line(
+        surface, color,
+        (x + int(2 * scale), y),
+        (x - int(2 * scale), y + int(9 * scale)),
+        max(2, int(1.8 * scale)),
+    )
+
+
+def _draw_snowflake(surface, x, y, scale, color):
+    """雪の結晶1つ。3本の線を60度ずつ回して6方向の腕にする。"""
+    r = max(3, int(4.5 * scale))
+    w = max(2, int(1.4 * scale))
+    for k in range(3):
+        ang = math.pi * k / 3
+        dx, dy = math.cos(ang) * r, math.sin(ang) * r
+        pygame.draw.line(surface, color, (x - dx, y - dy), (x + dx, y + dy), w)
+
+
 def _draw_raindrops(surface, cx, cy, scale, color):
-    for dx in (-10, 0, 10):
-        x = cx + int(dx * scale / 12)
-        pygame.draw.line(surface, color, (x, cy), (x - 3, cy + int(10 * scale / 12)), 3)
-        pygame.draw.circle(surface, color, (x - 4, cy + int(13 * scale / 12)), max(2, int(2 * scale / 12)))
+    """雨粒を3つ横に並べる。
+    以前はここで scale を 12 で割っていたため、scale=1.6 のとき3粒の間隔が
+    1pxほどになり、1つの塊にしか見えていなかった。
+    """
+    s = _precip_spacing(scale)
+    for i in (-1, 0, 1):
+        _draw_raindrop(surface, cx + i * s, cy, scale, color)
+
+
+def _draw_snowflakes(surface, cx, cy, scale, color):
+    """雪の結晶を3つ。中央だけ少し下げて単調な横一列にしない。"""
+    s = _precip_spacing(scale)
+    for i, drop in ((-1, 0), (0, int(4 * scale)), (1, 0)):
+        _draw_snowflake(surface, cx + i * s, cy + int(4 * scale) + drop, scale, color)
+
+
+def _draw_sleet(surface, cx, cy, scale):
+    """霙。雨粒と雪の結晶を交互に並べて「混じっている」ことを示す。"""
+    s = _precip_spacing(scale)
+    _draw_raindrop(surface, cx - s, cy, scale, config.BLUE)
+    _draw_snowflake(surface, cx, cy + int(4 * scale), scale, config.SNOW)
+    _draw_raindrop(surface, cx + s, cy, scale, config.BLUE)
+
+
+def _draw_lightning(surface, cx, cy, scale, color):
+    """稲妻。上から下へ折れ曲がる多角形1つで描く。"""
+    pts = [(4, -13), (-6, 2), (-1, 2), (-4, 13), (7, -2), (2, -2)]
+    pygame.draw.polygon(
+        surface, color,
+        [(int(cx + px * scale), int(cy + py * scale)) for px, py in pts],
+    )
 
 
 def draw_weather_icon(surface, icon_type, center, scale=1.0):
@@ -234,12 +293,23 @@ def draw_weather_icon(surface, icon_type, center, scale=1.0):
         _draw_sun(surface, cx, cy, scale, config.ORANGE)
     elif icon_type == ICON_SUN_CLOUD:
         _draw_sun(surface, cx - int(6 * scale), cy - int(4 * scale), scale * 0.8, config.ORANGE)
-        _draw_cloud(surface, cx + int(4 * scale), cy + int(4 * scale), scale * 0.8, config.WHITE)
+        _draw_cloud(surface, cx + int(4 * scale), cy + int(6 * scale), scale * 0.8, config.ICON_GRAY)
     elif icon_type == ICON_RAIN:
-        _draw_cloud(surface, cx, cy - int(6 * scale), scale * 0.85, config.ICON_GRAY)
-        _draw_raindrops(surface, cx, cy + int(10 * scale), scale, config.BLUE)
+        _draw_cloud(surface, cx, cy - int(8 * scale), scale * 0.85, config.ICON_GRAY)
+        _draw_raindrops(surface, cx, cy + int(9 * scale), scale, config.BLUE)
+    elif icon_type == ICON_SNOW:
+        _draw_cloud(surface, cx, cy - int(8 * scale), scale * 0.85, config.ICON_GRAY)
+        _draw_snowflakes(surface, cx, cy + int(9 * scale), scale, config.SNOW)
+    elif icon_type == ICON_SLEET:
+        _draw_cloud(surface, cx, cy - int(8 * scale), scale * 0.85, config.ICON_GRAY)
+        _draw_sleet(surface, cx, cy + int(9 * scale), scale)
+    elif icon_type == ICON_THUNDER:
+        # 雷雲は暗くして、稲妻は雲の下端に少し食い込ませる
+        # (雲から伸びているように見せるため)
+        _draw_cloud(surface, cx, cy - int(8 * scale), scale * 0.85, config.THUNDER_CLOUD)
+        _draw_lightning(surface, cx, cy + int(11 * scale), scale * 0.9, config.LIGHTNING)
     else:  # ICON_CLOUDY
-        _draw_cloud(surface, cx, cy, scale, (150, 150, 150))
+        _draw_cloud(surface, cx, cy, scale * 0.9, (150, 150, 150))
 
 
 def _draw_card_bg(screen, rect):
