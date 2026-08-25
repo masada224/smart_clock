@@ -48,7 +48,7 @@ except ImportError:
     PYCAW_AVAILABLE = False
 
 # ------------------------------------------------------------------
-# 設定 (環境に合わせて変更してください)
+# 設定 (環境に合わせて変更する)
 # ------------------------------------------------------------------
 SERIAL_PORT = "COM5"      # デバイスマネージャーで確認して書き換える
 BAUD_RATE = 115200
@@ -336,13 +336,13 @@ def main():
     try:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=0.5)
     except serial.SerialException as e:
-        print(f"シリアルポート {SERIAL_PORT} を開けませんでした: {e}")
+        print(f"シリアルポート {SERIAL_PORT} を開けなかった: {e}")
         print("Raspberry PiがUSB CDC-ACMガジェットとして正しく認識されているか、")
-        print("COMポート番号が合っているかを確認してください。")
+        print("COMポート番号が合っているかを確認する。")
         sys.exit(1)
 
     volume_mode = "pycaw(音量の取得/設定に対応)" if VolumeControl().available else "仮想キー(音量の取得は不可)"
-    print(f"{SERIAL_PORT} @ {BAUD_RATE}bps で楽曲情報の送信を開始します。Ctrl+Cで終了。")
+    print(f"{SERIAL_PORT} @ {BAUD_RATE}bps で楽曲情報の送信を開始。Ctrl+Cで終了。")
     print(f"音量制御: {volume_mode}")
     try:
         asyncio.run(_main_loop(ser))

@@ -533,7 +533,7 @@ def draw_media_panel(screen, fonts, rect, media_data):
             placeholder_rect.center = (w // 2, pad + icon_area_h // 2)
             _draw_music_note_placeholder(card, placeholder_rect)
 
-    title = media_data.get("title") or "再生中の曲はありません"
+    title = media_data.get("title") or "再生中の曲なし"
     artist = media_data.get("artist") or ""
     album = media_data.get("album") or ""
 
@@ -660,14 +660,14 @@ def draw_aircon_panel(screen, fonts, rect, aircon_data, pressed_name=None):
         if sent_at is not None:
             status_line += f"  {sent_at.strftime('%H:%M')}"
     else:
-        status_line = "まだ操作していません"
+        status_line = "まだ操作していない"
     _text(screen, fonts["tiny"], status_line, config.TEXT_SECONDARY, topleft=(x0, y0 + 26))
 
     presets = aircon_data.get("presets") or []
     if not presets:
-        _text(screen, fonts["tiny"], "リモコンの信号が未学習です。",
+        _text(screen, fonts["tiny"], "リモコンの信号が未学習",
               config.TEXT_SECONDARY, topleft=(x0, y0 + 62))
-        _text(screen, fonts["tiny"], "ir_receiver.py で学習してください。",
+        _text(screen, fonts["tiny"], "ir_receiver.py で学習する",
               config.TEXT_SECONDARY, topleft=(x0, y0 + 80))
         return
 

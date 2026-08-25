@@ -164,9 +164,9 @@ if __name__ == "__main__":
     )
     enc.start()
     if not enc.get()["available"]:
-        print("ハードウェアが使えません(pigpioが無いか、pigpiodが未起動です)")
+        print("ハードウェアが使えない(pigpioが無いか、pigpiodが未起動)")
     else:
-        print(f"GPIO{enc.a_pin}/{enc.b_pin}/{enc.sw_pin} で待機中。30秒間、回したり押したりしてください。")
+        print(f"GPIO{enc.a_pin}/{enc.b_pin}/{enc.sw_pin} で待機中。30秒間、回したり押したりしてみて。")
     try:
         for _ in range(30):
             time.sleep(1)

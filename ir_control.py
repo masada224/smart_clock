@@ -122,7 +122,7 @@ class IRController:
         """
         pulses = ir_codes.load(name)
         if pulses is None:
-            print(f"[IR] 未登録の信号です: {name} (ir_receiver.py で学習してください)")
+            print(f"[IR] 未登録の信号: {name} (ir_receiver.py で学習する)")
             return False
         self.send(pulses, name=name)
         return True
@@ -152,7 +152,7 @@ if __name__ == "__main__":
         if len(sys.argv) > 1:
             ir.send_named(sys.argv[1])
         else:
-            print("学習済み:", ", ".join(ir_codes.names()) or "(まだありません)")
+            print("学習済み:", ", ".join(ir_codes.names()) or "(まだ無い)")
             ir.send_dummy_ac_on()
     finally:
         ir.close()

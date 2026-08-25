@@ -38,7 +38,7 @@ class AirconController:
     def send(self, name):
         """プリセット名を指定して赤外線を送信する。送れたらTrueを返す。"""
         if self.ir is None:
-            print(f"[AIRCON] IRコントローラーが無いため送信できません: {name}")
+            print(f"[AIRCON] IRコントローラーが無いので送信できない: {name}")
             return False
         if not self.ir.send_named(name):
             return False
@@ -71,6 +71,6 @@ if __name__ == "__main__":
 
     ir = IRController()
     ac = AirconController(ir)
-    print("学習済みプリセット:", ac.presets() or "(まだありません。ir_receiver.pyで学習してください)")
+    print("学習済みプリセット:", ac.presets() or "(まだ無い。ir_receiver.py で学習する)")
     print("状態:", ac.get())
     ir.close()

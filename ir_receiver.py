@@ -89,7 +89,7 @@ class IRReceiver:
         gap_us = gap_us if gap_us is not None else config.IR_CAPTURE_GAP_US
 
         if self._pi is None:
-            print("[IR-RX] 受信できません(pigpioが使えないか、pigpiodが未起動です)")
+            print("[IR-RX] 受信できない(pigpioが使えないか、pigpiodが未起動)")
             return None
 
         self._edges = []
@@ -157,7 +157,7 @@ def summarize(pulses):
     判断するための材料として使う。
     """
     if not pulses:
-        print("  (波形が空です)")
+        print("  (波形が空)")
         return
 
     total_ms = sum(pulses) / 1000.0
@@ -169,7 +169,7 @@ def summarize(pulses):
     body = pulses[2:]
     spaces = body[1::2]
     if len(spaces) < 8:
-        print("  ビット列  : (短すぎて判定できません)")
+        print("  ビット列  : (短すぎて判定できない)")
         return
 
     lo, hi = min(spaces), max(spaces)
@@ -182,22 +182,22 @@ def summarize(pulses):
         print(f"    {bits[i:i + 64]}")
 
     if len(bits) > 64:
-        print("  -> bit数が多いので、エアコンのように「状態まるごと」を送るタイプです。")
-        print("     温度やモードごとに1つずつ学習して保存する運用が現実的です。")
+        print("  -> bit数が多いので、エアコンのように「状態まるごと」を送るタイプ。")
+        print("     温度やモードごとに1つずつ学習して保存する運用が現実的。")
 
 
 def _learn(name, save=True):
     rx = IRReceiver()
     try:
-        print(f"[IR-RX] GPIO{rx.gpio_pin} で待機中です。")
-        print(f"        受信モジュールにリモコンを向けて「{name}」のボタンを押してください")
-        print(f"        ({config.IR_CAPTURE_TIMEOUT_SEC}秒でタイムアウトします)")
+        print(f"[IR-RX] GPIO{rx.gpio_pin} で待機中。")
+        print(f"        受信モジュールにリモコンを向けて「{name}」のボタンを押す")
+        print(f"        ({config.IR_CAPTURE_TIMEOUT_SEC}秒でタイムアウト)")
         pulses = rx.capture()
     finally:
         rx.close()
 
     if not pulses:
-        print("[IR-RX] 受信できませんでした。配線・電源・pigpiod・向きを確認してください。")
+        print("[IR-RX] 受信できなかった。配線・電源・pigpiod・向きを確認する。")
         return 1
 
     print(f"\n[IR-RX] 受信しました: {name}")
@@ -207,7 +207,7 @@ def _learn(name, save=True):
         ir_codes.save(name, pulses)
         print(f"\n[IR-RX] {config.IR_CODES_FILE} に保存しました。")
     else:
-        print("\n[IR-RX] -n が指定されたため保存していません。")
+        print("\n[IR-RX] -n が指定されたので保存していない。")
     return 0
 
 
@@ -227,13 +227,13 @@ if __name__ == "__main__":
     if args.list:
         described = ir_codes.describe()
         if not described:
-            print("学習済みの信号はまだありません。")
+            print("学習済みの信号はまだ無い。")
         for n, (count, at) in described.items():
             print(f"{n}: {count}区間 (学習日時: {at})")
         sys.exit(0)
 
     if args.delete:
-        print(f"削除しました: {args.delete}" if ir_codes.delete(args.delete) else f"見つかりません: {args.delete}")
+        print(f"削除した: {args.delete}" if ir_codes.delete(args.delete) else f"見つからない: {args.delete}")
         sys.exit(0)
 
     if not args.name:

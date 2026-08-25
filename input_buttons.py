@@ -145,7 +145,7 @@ if __name__ == "__main__":
     buttons.start()
 
     if not buttons.get()["available"]:
-        print("ハードウェアが使えません(pigpioが無いか、pigpiodが未起動です)")
+        print("ハードウェアが使えない(pigpioが無いか、pigpiodが未起動)")
     else:
         # 押していない状態のレベルを見て、配線ミスを先に指摘する
         levels = buttons.read_levels()
@@ -155,13 +155,13 @@ if __name__ == "__main__":
             print(f"  GPIO{pin} ({names[pin]}): {state}")
         if stuck:
             print()
-            print("押していないのにLowになっているピンがあります。配線を確認してください:")
-            print("  ・タクトスイッチの同じ側から出ている2本を使っていませんか")
-            print("    (同じ側の2本は内部で繋がっているので、常に導通します)")
-            print("  ・使うのは向かい合う側から1本ずつ。対角の2本を選べば確実です")
-            print("  ・GPIOとGNDが直接触れていませんか")
+            print("押していないのにLowになっているピンがある。配線を確認:")
+            print("  ・タクトスイッチの同じ側から出ている2本を使っていないか")
+            print("    (同じ側の2本は内部で繋がっているので、常に導通する)")
+            print("  ・使うのは向かい合う側から1本ずつ。対角の2本を選べば確実")
+            print("  ・GPIOとGNDが直接触れていないか")
             print()
-        print(f"待機中。30秒間、押してください。")
+        print("待機中。30秒間、押してみて。")
 
     try:
         for _ in range(30):
