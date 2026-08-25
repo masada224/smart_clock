@@ -1,0 +1,11 @@
+# WindowsのPCとRaspberry Pi(Linux)の両方で作業するため、改行コードを固定する。
+# リポジトリ内は常にLFとし、チェックアウト時もLFのままにする。
+# これをしないとsystemdのunitファイル等がCRLFになって動かないことがある。
+* text=auto eol=lf
+
+# フォント等のバイナリは改行変換の対象外にする(変換されると壊れるため)
+*.ttf binary
+*.otf binary
+*.png binary
+*.jpg binary
+*.ico binary

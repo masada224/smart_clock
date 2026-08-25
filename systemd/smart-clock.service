@@ -1,0 +1,19 @@
+[Unit]
+Description=Smart Desk Clock (Pygame)
+After=network-online.target bluetooth.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/smart_clock
+Environment=SDL_VIDEODRIVER=kmsdrm
+# フレームバッファ直描画にする場合は下記に切り替え(kmsdrmで映らない場合のみ)
+# Environment=SDL_VIDEODRIVER=fbcon
+# Environment=SDL_FBDEV=/dev/fb0
+ExecStart=/usr/bin/python3 /home/pi/smart_clock/main.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target

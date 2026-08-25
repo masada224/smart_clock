@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# 仮想環境 (PCとRaspberry Piで中身が異なるため、絶対に共有しない)
+# プロジェクト直下の venv も usb_media_bridge/pc_sender/venv も両方対象
+venv/
+.venv/
+env/
+
+# ローカル環境ごとの設定 (緯度経度、PC/Pi で異なるポート名など)
+# 雛形は config_local.example.py として管理下に置いてある
+config_local.py
+
+# 実行時に生成されるもの
+pid.txt
+*.log
+
+# OS が勝手に作るもの
+Thumbs.db
+desktop.ini
+.DS_Store

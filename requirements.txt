@@ -1,0 +1,11 @@
+pygame>=2.5.0
+requests>=2.31.0
+adafruit-circuitpython-dht>=3.7.9
+adafruit-blinka>=8.20.1
+pyserial>=3.5   # USBメディア連携(media_usb.py)用
+pigpio>=1.78     # IR送信(ir_control.py)用。pigpiodデーモンを別途起動しておくこと
+gpiozero>=2.0    # PIR人感センサー(sensor_pir.py)用
+
+# 以下はpipではなくaptでのインストールを強く推奨(ビルド依存関係のため)
+#   sudo apt install python3-dbus python3-gi
+# python3-dbus (dbus-python) はここには含めていません
